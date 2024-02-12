@@ -1,15 +1,15 @@
-const accessKey = "v8Uu1I5nJIWR3iIb00qSkj7orDEOMC3tTpFcUVhjhTM";
-
-const randomImageUrl = "https://api.unsplash.com/photos/random";
+// Элементы DOM
 const randomImageElement = document.getElementById("randomImage");
 const photographerInfoElement = document.getElementById("photographerInfo");
 const likeButton = document.getElementById("likeButton");
 const likeCountElement = document.getElementById("likeCount");
 const previousImageButton = document.getElementById("previousImageButton");
 
+// Переменные состояния
 let likeCount = 0;
 let imageHistory = [];
 
+// Функция для получения случайного изображения
 async function getRandomImage() {
     try {
         const response = await fetch(`${randomImageUrl}?client_id=${accessKey}`);
@@ -24,11 +24,13 @@ async function getRandomImage() {
     }
 }
 
+// Функция для обновления счетчика лайков
 function updateLikeCount(count) {
     likeCountElement.textContent = count;
     localStorage.setItem("likeCount", count);
 }
 
+// Обработчик нажатия на кнопку "лайк"
 function handleLike() {
     const previousImageId = imageHistory[imageHistory.length - 1].id;
     let likedImageIds = JSON.parse(localStorage.getItem("likedImageIds")) || [];
@@ -51,6 +53,7 @@ function handleLike() {
 
 likeButton.addEventListener("click", handleLike);
 
+// Функция для отображения предыдущего изображения
 function showPreviousImage() {
     if (imageHistory.length > 1) {
         imageHistory.pop(); // Удаление текущего изображения из истории
@@ -76,11 +79,13 @@ function showPreviousImage() {
 
 previousImageButton.addEventListener("click", showPreviousImage);
 
+// Функция для сохранения изображения в истории просмотров
 function saveImageToHistory(image) {
     imageHistory.push(image);
     localStorage.setItem("imageHistory", JSON.stringify(imageHistory));
 }
 
+// Функция для загрузки истории просмотров из Local Storage
 async function loadImageHistory() {
     const savedImageHistory = localStorage.getItem("imageHistory");
     if (savedImageHistory) {
@@ -89,12 +94,14 @@ async function loadImageHistory() {
     }
 }
 
+// Функция для отображения текущего изображения
 function displayCurrentImage() {
     const currentImage = imageHistory[imageHistory.length - 1];
     randomImageElement.src = currentImage.urls.regular;
     photographerInfoElement.textContent = `Photographer: ${currentImage.user.name}`;
 }
 
+// Загрузка истории просмотров при загрузке страницы
 window.addEventListener("DOMContentLoaded", async() => {
     await loadImageHistory();
     let likedImageIds = JSON.parse(localStorage.getItem("likedImageIds")) || [];
